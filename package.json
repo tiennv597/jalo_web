@@ -1,0 +1,36 @@
+{
+  "name": "jalo-web",
+  "version": "1.0.0",
+  "description": "Server with Nuxt.js",
+  "author": "Tiennv597",
+  "private": true,
+  "scripts": {
+    "dev": "nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate"
+  },
+  "dependencies": {
+    "@nuxtjs/axios": "^5.12.0",
+    "cross-env": "^5.2.0",
+    "font-awesome": "^4.7.0",
+    "lodash.truncate": "^4.4.2",
+    "nuxt": "^2.14.0",
+    "quill": "^1.3.7",
+    "roboto-fontface": "*",
+    "vee-validate": "^2.1.7",
+    "vue": "^2.6.11",
+    "vue-fullcalendar": "^1.0.9",
+    "vue-perfect-scrollbar": "^0.1.0",
+    "vue-quill-editor": "^3.0.6",
+    "vue-server-renderer": "^2.6.11",
+    "vuetify": "^1.4.4",
+    "vuetify-loader": "^1.2.0",
+    "vuex": "^3.5.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.9",
+    "stylus": "^0.54.5",
+    "stylus-loader": "^3.0.2"
+  }
+}

@@ -1,0 +1,5 @@
+So I did:
+
+Run cmd as administrator
+Run : npm config edit (You will get notepad editor)
+Change prefix variable to C:\Users\tienn\AppData\Roaming\npm
