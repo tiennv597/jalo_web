@@ -1,5 +1,3 @@
-import AuthSercices from '/shinro/jalo_web/api/modules/auth'
-
 export default {
     async login({ commit }, credentials) {
         try {

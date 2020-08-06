@@ -78,19 +78,18 @@ export default {
         password: this.password,
       });
       setTimeout(() => {
-      this.$router.push("/dashboard");
-    }, 1000);
+        this.$router.push("/dashboard");
+      }, 1000);
     },
   },
   computed: {
     ...mapGetters({
       user: "AUTH/user",
     }),
-    
   },
   // mounted() {
   //   console.log(this.user); // I'm text inside the component.
-  
+
   // },
 };
 </script>

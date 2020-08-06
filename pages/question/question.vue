@@ -2,7 +2,7 @@
   <v-form>
     <v-container sm12>
       <v-layout row wrap>
-        <v-flex sm11 id="question">
+        <v-flex sm11>
           <!--  -->
           <v-card>
             <v-layout row>
@@ -10,7 +10,6 @@
               <v-flex xs1>
                 <v-select
                   v-model="level"
-                  :hint="`${level.name}, ${level.id}`"
                   :items="levels"
                   item-text="name"
                   item-value="id"
@@ -24,7 +23,6 @@
               <v-flex xs1>
                 <v-select
                   v-model="type"
-                  :hint="`${type.name}, ${type.id}`"
                   :items="types"
                   item-text="name"
                   item-value="id"
@@ -39,7 +37,6 @@
               <v-flex xs2>
                 <v-select
                   v-model="typeSub"
-                  :hint="`${typeSub.name}, ${typeSub.id}`"
                   :items="typesSub"
                   item-text="name"
                   item-value="id"
@@ -56,16 +53,13 @@
             <v-layout row>
               <v-flex xs1></v-flex>
               <v-flex xs10>
-                <v-text-field
-                  multi-line
-                  rows="2"
-                  shaped="false"
-                  v-model="question"
-                  outlined
-                  clearable
-                  label="Write your question here"
-                  type="text"
-                ></v-text-field>
+                <span>Nhập câu hỏi</span>
+                <div id="text" contenteditable="true" @input="onInput">
+                  <input type="hidden" v-model="question" placeholder="edit me" />
+                </div>
+                <v-btn v-on:click="setBold">toggle bold</v-btn>
+                <v-btn v-on:click="setItalic">toggle italic</v-btn>
+                <v-btn v-on:click="setUnderline">toggle underline</v-btn>
               </v-flex>
             </v-layout>
           </v-card>
@@ -77,10 +71,11 @@
                 <v-flex xs1>
                   <v-subheader>
                     <v-checkbox
-                      v-model="result"
-                      :id="item.checked"
+                      v-model="results"
+                      :id="item.id"
                       color="blue"
                       :value="item.checked"
+                      c
                       hide-details
                     ></v-checkbox>
                   </v-subheader>
@@ -106,7 +101,7 @@
                   multi-line
                   rows="2"
                   shaped="false"
-                  v-model="question"
+                  v-model="explain"
                   outlined
                   clearable
                   label="Viết đáp án tại đây"
@@ -115,7 +110,6 @@
               </v-flex>
             </v-layout>
           </v-card>
-          <span>Checked names: {{ content1 }} {{ content2}}{{content3}}{{content4}}</span>
           <v-card>
             <v-layout row>
               <v-flex xs1>
@@ -145,7 +139,6 @@
 import Types from "@/api/types";
 import Vue from "vue";
 import { mapGetters, mapActions } from "vuex";
-new Vue({ el: "#question" });
 export default {
   layout: "dashboard",
   components: {},
@@ -156,25 +149,25 @@ export default {
           id: "answer1",
           label: "Answer option 1",
           content: "",
-          checked: "1",
+          checked: 1,
         },
         {
           id: "answer2",
           label: "Answer option 2",
           content: "",
-          checked: "2",
+          checked: 2,
         },
         {
           id: "answer3",
           label: "Answer option 3",
           content: "",
-          checked: "3",
+          checked: 3,
         },
         {
           id: "answer4",
           label: "Answer option 4",
           content: "",
-          checked: "4",
+          checked: 4,
         },
       ],
       levels: [
@@ -199,13 +192,12 @@ export default {
         { id: "4", name: "Nghe" },
       ],
       typeSub: {},
-      result: [],
+      results: [],
+      bold: [],
+      italic: [],
+      underline: [],
       loading: false,
-      content1: "",
-      content2: "",
-      content3: "",
-      content4: "",
-      content5: "",
+      question: "",
     };
   },
   computed: {
@@ -217,8 +209,53 @@ export default {
     }),
   },
   methods: {
+    setBold() {
+      document.execCommand("bold");
+      if (document.getSelection) {
+        // all browsers, except IE before version 9
+        var sel = document.getSelection();
+        // sel is a string in Firefox and Opera,
+        // and a selectionRange object in Google Chrome, Safari and IE from version 9
+        // the alert method displays the result of the toString method of the passed object
+        this.bold.push(sel.toString());
+        //console.log(this.bold[0]);
+      } else {
+        if (document.selection) {
+          var textRange = document.selection.createRange();
+          this.bold.push(textRange.text.toString());
+        }
+      }
+    },
+    setItalic() {
+      if (document.getSelection) {
+        var sel = document.getSelection();
+        this.italic.push(sel.toString());
+      } else {
+        if (document.selection) {
+          var textRange = document.selection.createRange();
+          this.italic.push(textRange.text.toString());
+        }
+      }
+      document.execCommand("italic");
+    },
+    setUnderline() {
+      if (document.getSelection) {
+        var sel = document.getSelection();
+        this.underline.push(sel.toString());
+        console.log(this.underline);
+      } else {
+        if (document.selection) {
+          var textRange = document.selection.createRange();
+          this.underline.push(textRange.text.toString());
+          console.log(this.underline[0]);
+        }
+      }
+      document.execCommand("underline");
+    },
     addOption() {
-      console.log("test add question");
+      // let textarea = this.$refs.ta;
+      // let start = textarea.selectionStart;
+      // let end = textarea.selectionEnd;
       this.$store.dispatch("QUESTION/addOption", {
         items: this.items,
       });
@@ -231,17 +268,47 @@ export default {
     },
 
     saveQuestion() {
-      const answer = [];
+      const options = [];
       for (let index = 0; index < this.items.length; index++) {
-        answer.push(this.items[index].content);
+        let option = {
+          answer: this.items[index].content,
+          result: false,
+        };
+        options.push(option);
+      }
+      for (let index = 0; index < this.results.length; index++) {
+        switch (this.results[index]) {
+          case 1:
+            options[0].result = true;
+            break;
+          case 2:
+            options[1].result = true;
+            break;
+          case 3:
+            options[2].result = true;
+            break;
+          case 4:
+            options[3].result = true;
+            break;
+          default:
+            break;
+        }
       }
       var question = {
         level: this.level,
         type: this.type,
         subType: this.typeSub,
         question: this.question,
+        explain: this.explain,
+        answer: options,
+        result: this.result,
+        bold: this.bold,
+        italic: this.italic,
+        underline: this.underline,
       };
-      console.log(question);
+      this.$store.dispatch("QUESTION/createQuestion", {
+        question: question,
+      });
     },
     onChangeType() {
       switch (this.level.id) {
@@ -375,6 +442,27 @@ export default {
         default:
       }
     },
+    onInput(e) {
+      return (this.question = e.target.innerText);
+      console.log(this.question);
+    },
   },
 };
 </script>
+<style scoped lang="css">
+div:focus {
+  border-style: none;
+  border-color: Transparent;
+  overflow: auto;
+  outline: none !important;
+  border: 1px solid rgb(39, 6, 221);
+}
+#text {
+  border-color: Transparent;
+  outline: none !important;
+  border: 1px solid rgb(24, 157, 190);
+  height: 50px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+</style>
