@@ -42,7 +42,6 @@
                 </v-btn>
                 <v-spacer></v-spacer>
                 <v-btn block color="primary" @click="login" :loading="loading">Login</v-btn>
-                <!-- <p class="title">{{user.firstName}}</p> -->
               </v-card-actions>
             </v-card>
           </v-flex>
@@ -57,10 +56,6 @@ import { mapGetters, mapActions } from "vuex";
 export default {
   layout: "default",
   data() {
-    // model: {
-
-    //   //hello: "hello word",
-    // },
     return {
       loading: false,
       username: "",
@@ -71,8 +66,6 @@ export default {
   methods: {
     login() {
       this.loading = true;
-
-      console.log("test");
       this.$store.dispatch("AUTH/login", {
         username: this.username,
         password: this.password,
@@ -87,10 +80,6 @@ export default {
       user: "AUTH/user",
     }),
   },
-  // mounted() {
-  //   console.log(this.user); // I'm text inside the component.
-
-  // },
 };
 </script>
 <style scoped lang="css">

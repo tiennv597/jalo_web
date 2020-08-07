@@ -1,7 +1,6 @@
 import actions from './actions'
 import getters from './getters'
 import mutations from './mutations'
-// import state from './state'
 
 const state = {
   items: [],
@@ -13,6 +12,7 @@ const state = {
     { id: "5", name: "Biểu hiện từ" },
     { id: "6", name: "Cách dùng từ" },
   ],
+  status: "",
 }
 export default {
   namespaced: true,

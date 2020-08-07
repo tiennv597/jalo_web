@@ -7,5 +7,10 @@ export default {
     SET_SUB_TYPE(state, typesSub) {
         state.typesSub = typesSub
         console.log(typesSub)
+    },
+    SET_STATUS(state, status) {
+        state.status = status
+        console.log(status)
     }
+
 }

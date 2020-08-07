@@ -6,7 +6,7 @@
           <v-widget title="Basic Usage">
             <div slot="widget-content">
               <v-dialog v-model="basic.dialog" persistent max-width="500px">
-                <v-btn color="primary" dark slot="activator">Open Dialog</v-btn>
+                <v-btn color="primary" @click="basic.dialog = true" dark slot="activator">Open Dialog</v-btn>
                 <v-card>
                   <v-card-title>
                     <span class="headline">User Profile</span>

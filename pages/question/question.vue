@@ -75,7 +75,6 @@
                       :id="item.id"
                       color="blue"
                       :value="item.checked"
-                      c
                       hide-details
                     ></v-checkbox>
                   </v-subheader>
@@ -115,10 +114,26 @@
               <v-flex xs1>
                 <v-subheader></v-subheader>
               </v-flex>
-              <v-flex xs11>
-                <v-btn color="error" v-on:click="deleteOption">Delete answer option</v-btn>
-                <v-btn color="info" v-on:click="addOption">Add answer option</v-btn>
-                <v-btn color="success" v-on:click="saveQuestion">Save</v-btn>
+              <v-flex xs10>
+                <p class="message-successful">{{status}}</p>
+              </v-flex>
+            </v-layout>
+          </v-card>
+          <v-card>
+            <v-layout row>
+              <v-flex xs1>
+                <v-subheader></v-subheader>
+              </v-flex>
+              <v-flex xs10>
+                <v-btn color="warning" v-on:click="clearForm">Xóa trắng toàn bộ</v-btn>
+                <v-btn color="error" v-on:click="deleteOption">Xóa một lựa chọn đáp án</v-btn>
+                <v-btn color="info" v-on:click="addOption">Thêm một lựa chọn đáp án</v-btn>
+                <v-btn
+                  :disabled="dialog"
+                  :loading="dialog"
+                  color="success"
+                  v-on:click="saveQuestion"
+                >Lưu</v-btn>
               </v-flex>
             </v-layout>
           </v-card>
@@ -133,6 +148,16 @@
         </v-flex>
       </v-layout>
     </v-container>
+    <!-- dialog start -->
+    <v-dialog v-model="dialog" hide-overlay persistent width="300">
+      <v-card color="primary" dark>
+        <v-card-text>
+          Đang lưu câu hỏi
+          <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+    <!-- dialog end -->
   </v-form>
 </template>
 <script>
@@ -144,28 +169,29 @@ export default {
   components: {},
   data() {
     return {
+      dialog: false,
       items: [
         {
           id: "answer1",
-          label: "Answer option 1",
+          label: "Câu trả lời 1",
           content: "",
           checked: 1,
         },
         {
           id: "answer2",
-          label: "Answer option 2",
+          label: "Câu trả lời 2",
           content: "",
           checked: 2,
         },
         {
           id: "answer3",
-          label: "Answer option 3",
+          label: "Câu trả lời 3",
           content: "",
           checked: 3,
         },
         {
           id: "answer4",
-          label: "Answer option 4",
+          label: "Câu trả lời 4",
           content: "",
           checked: 4,
         },
@@ -206,6 +232,7 @@ export default {
     }),
     ...mapGetters({
       typesSub: "QUESTION/typesSub",
+      status: "QUESTION/status",
     }),
   },
   methods: {
@@ -242,20 +269,15 @@ export default {
       if (document.getSelection) {
         var sel = document.getSelection();
         this.underline.push(sel.toString());
-        console.log(this.underline);
       } else {
         if (document.selection) {
           var textRange = document.selection.createRange();
           this.underline.push(textRange.text.toString());
-          console.log(this.underline[0]);
         }
       }
       document.execCommand("underline");
     },
     addOption() {
-      // let textarea = this.$refs.ta;
-      // let start = textarea.selectionStart;
-      // let end = textarea.selectionEnd;
       this.$store.dispatch("QUESTION/addOption", {
         items: this.items,
       });
@@ -268,6 +290,7 @@ export default {
     },
 
     saveQuestion() {
+      this.dialog = true;
       const options = [];
       for (let index = 0; index < this.items.length; index++) {
         let option = {
@@ -306,16 +329,22 @@ export default {
         italic: this.italic,
         underline: this.underline,
       };
-      this.$store.dispatch("QUESTION/createQuestion", {
-        question: question,
-      });
+      setTimeout(() => {
+        this.$store.dispatch("QUESTION/createQuestion", {
+          question: question,
+        });
+        this.bold = [];
+        this.italic = [];
+        this.underline = [];
+        this.dialog = false;
+      }, 3000);
+      console.log(this.italic + " " + this.bold + " " + this.underline);
     },
     onChangeType() {
       switch (this.level.id) {
         case "1":
           switch (this.type.id) {
             case "1":
-              console.log("N1");
               this.$store.dispatch("QUESTION/changeSubType", {
                 typesSub: Types.subTypesVocabularyN1,
               });
@@ -341,7 +370,6 @@ export default {
         case "2":
           switch (this.type.id) {
             case "1":
-              console.log("N2");
               this.$store.dispatch("QUESTION/changeSubType", {
                 typesSub: Types.subTypesVocabularyN2,
               });
@@ -443,8 +471,17 @@ export default {
       }
     },
     onInput(e) {
+      this.$store.dispatch("QUESTION/clearStatus", {});
       return (this.question = e.target.innerText);
-      console.log(this.question);
+    },
+    clearForm() {
+      this.question = "";
+      document.getElementById("text").innerHTML = "";
+      for (let index = 0; index < this.items.length; index++) {
+        this.items[index].content = "";
+      }
+      this.results = [];
+      this.explain = "";
     },
   },
 };
@@ -464,5 +501,8 @@ div:focus {
   height: 50px;
   margin-top: 8px;
   margin-bottom: 8px;
+}
+.message-successful {
+  color: brown;
 }
 </style>

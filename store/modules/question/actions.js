@@ -9,7 +9,6 @@ export default {
         }
         items.items.push(item);
         commit("SET_ITEM", items.items);
-
     },
     deleteOption({ commit }, items) {
         let index = items.items.length - 1;
@@ -17,23 +16,25 @@ export default {
         commit("SET_ITEM", items.items);
 
     },
+    clearStatus({ commit }) {
+        commit("SET_STATUS", "");
+    },
     changeSubType({ commit }, typesSub) {
         console.log(typesSub);
         commit("SET_SUB_TYPE", typesSub.typesSub);
     },
+    // create a new question
     async createQuestion({ commit }, question) {
         try {
             const respronse = await this.$axios.$post('question', {
                 question: question.question,
             })
-            //  const respronse = await AuthSercices.login(credentials);
+            if (respronse.status == true) {
+                commit("SET_STATUS", "Tạo mới câu hỏi thành công!");
+            } else {
+                commit("SET_STATUS", "Có lỗi khi tạo câu hỏi");
+            }
             console.log(respronse);
-            // if (respronse.email == 'admin1@gmail.com') {
-            //     commit("SET_USER", respronse)
-            // } else {
-            //     commit("SET_USER", "có lỗi")
-            // }
-         
 
         } catch (error) {
             console.log(error.respronse)
