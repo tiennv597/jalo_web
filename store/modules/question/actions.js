@@ -3,7 +3,7 @@ export default {
         let index = items.items.length + 1;
         const item = {
             id: "answer" + index,
-            label: "Answer option " + index,
+            label: "Câu trả lời " + index,
             content: "",
             checked: index,
         }

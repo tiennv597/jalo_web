@@ -15,6 +15,13 @@ const Menu = [
     href:'/question/question'
   },
   {
+    title: 'Question',
+    group: 'apps',
+    icon: 'edit',
+    name: 'Chat',
+    href:'/question/index-qu'
+  },
+  {
     title: 'Empty',
     group: 'extra',
     icon: 'insert_drive_file',
