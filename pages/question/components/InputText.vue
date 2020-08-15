@@ -365,7 +365,7 @@ export default {
         question: this.question,
         explain: this.explain,
         answer: options,
-        results: this.results,
+        result: this.result,
         bold: this.bold,
         italic: this.italic,
         underline: this.underline,

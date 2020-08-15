@@ -49,7 +49,6 @@ export default {
         try {
             if (searchBy.searchByType.id == "1") {
                 respronse = await this.$axios.$post('question/getByContent', {
-                    searchByType: searchBy.searchByType,
                     search: searchBy.search
                 })
             } else if (searchBy.searchByType.id == "2") {
@@ -76,13 +75,13 @@ export default {
                 })
 
             }
-
+            commit("GET_QUESTIONS", respronse.questions);
             // if (respronse.status == true) {
             //     commit("SET_STATUS", "Tạo mới câu hỏi thành công!");
             // } else {
             //     commit("SET_STATUS", "Có lỗi khi tạo câu hỏi");
             // }
-            console.log(respronse);
+            // console.log(respronse);
 
         } catch (error) {
             console.log(error.respronse)

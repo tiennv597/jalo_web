@@ -49,29 +49,42 @@
             <v-card-text class="pa-0">
               <v-data-table
                 :headers="complex.headers"
-                :search="search"
-                :items="complex.items"
+                :items="questions"
                 :rows-per-page-items="[10,25,50,{text:'All','value':-1}]"
                 class="elevation-1"
-                item-key="name"
-                v-model="complex.selected"
+                item-key="idQuestion"
+                v-model="selected"
               >
                 <template slot="items" slot-scope="props">
+                  <td>{{props.index+1}}</td>
+                  <td>{{ props.item.idQuestion}}</td>
+                  <td>{{ props.item.level.name }}</td>
+                  <td>{{ props.item.type.name }}</td>
+                  <td>{{ props.item.subType.name }}</td>
                   <td>
-                    <v-avatar size="32">
-                      <img :src="props.item.avatar" alt />
-                    </v-avatar>
+                    <v-layout row>
+                      <v-flex xs12>{{ props.item.question }}</v-flex>
+                    </v-layout>
+                    <v-layout row>
+                      <span>{{"1: &nbsp;" }}</span>
+                      <v-flex xs11>{{ props.item.answer[0].answer }}</v-flex>
+                    </v-layout>
+                    <v-layout row>
+                      <span>{{"2: &nbsp;" }}</span>
+                      <v-flex xs11>{{ props.item.answer[1].answer }}</v-flex>
+                    </v-layout>
+                    <v-layout row>
+                      <span>{{"3: &nbsp;" }}</span>
+                      <v-flex xs11>{{ props.item.answer[2].answer }}</v-flex>
+                    </v-layout>
+                    <v-layout row>
+                      <span>{{"4: &nbsp;" }}</span>
+                      <v-flex xs11>{{ props.item.answer[3].answer }}</v-flex>
+                    </v-layout>
                   </td>
-                  <td>{{ props.item.name }}</td>
-                  <td>{{ props.item.email }}</td>
-                  <td>{{ props.item.name }}</td>
-                  <td>{{ props.item.name }}</td>
-                  <td>{{ props.item.email }}</td>
-                  <td>{{ props.item.phone }}</td>
+                  <td>{{ props.item.date }}</td>
                   <td>
-                    <v-btn depressed outline icon fab dark color="primary" small>
-                      <v-icon>edit</v-icon>
-                    </v-btn>
+                    <UpdateDialog :question="props.item" />
                     <v-btn depressed outline icon fab dark color="pink" small>
                       <v-icon>delete</v-icon>
                     </v-btn>
@@ -87,6 +100,7 @@
 </template>
 <script>
 import AddDialog from "./components/AddDialog";
+import UpdateDialog from "./components/UpdateDialog";
 import { Items as Users } from "@/api/user";
 import Vue from "vue";
 import { mapGetters, mapActions } from "vuex";
@@ -94,6 +108,7 @@ export default {
   layout: "dashboard",
   components: {
     AddDialog,
+    UpdateDialog,
   },
   created() {
     this.$store.dispatch("QUESTION/getQuestion", {
@@ -130,6 +145,7 @@ export default {
         },
       ],
       search: "",
+      selected: [],
       complex: {
         selected: [],
         headers: [
@@ -175,6 +191,9 @@ export default {
       typesSub: "QUESTION/typesSub",
       status: "QUESTION/status",
     }),
+    ...mapGetters({
+      questions: "QUESTION/questions",
+    }),
   },
   methods: {
     onInput() {
@@ -204,5 +223,8 @@ div:focus {
 }
 .message-successful {
   color: brown;
+}
+.pa {
+  margin: 4xp;
 }
 </style>

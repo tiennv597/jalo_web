@@ -11,6 +11,10 @@ export default {
     SET_STATUS(state, status) {
         state.status = status
         console.log(status)
+    },
+    GET_QUESTIONS(state, questions) {
+        state.questions = questions
+        console.log(questions[0].idQuestion)
     }
 
 }

@@ -4,13 +4,15 @@
       <v-layout row>
         <v-flex lg1></v-flex>
         <v-flex xs16>
-          <v-btn color="primary" dark v-bind="attrs" v-on="on">Thêm câu hỏi</v-btn>
+          <v-btn depressed outline icon fab dark color="primary" small v-bind="attrs" v-on="on">
+            <v-icon>edit</v-icon>
+          </v-btn>
         </v-flex>
       </v-layout>
     </template>
     <v-card>
       <v-toolbar dark color="primary">
-        <v-toolbar-title>Thêm Câu hỏi</v-toolbar-title>
+        <v-toolbar-title>Chỉnh sửa câu hỏi</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn icon @click="dialog = false">
           <v-icon>close</v-icon>
@@ -20,8 +22,12 @@
         <v-container sm10>
           <v-layout row>
             <v-flex sm12>
-              <!--  -->
               <v-card>
+                <v-layout row>
+                  <v-flex xs1></v-flex>
+                  <v-flex xs11>Mã câu hỏi:&nbsp;{{question.idQuestion}}</v-flex>
+                  <v-flex xs11>Mã câu hỏi:&nbsp;{{results}}</v-flex>
+                </v-layout>
                 <v-layout row>
                   <v-flex xs1></v-flex>
                   <v-flex xs1>
@@ -53,7 +59,7 @@
                   <v-flex xs1></v-flex>
                   <v-flex xs2>
                     <v-select
-                      v-model="typeSub"
+                      v-model="this.question.subType"
                       :items="typesSub"
                       item-text="name"
                       item-value="id"
@@ -71,7 +77,7 @@
                   <v-flex xs1></v-flex>
                   <v-flex xs10>
                     <span>Nhập câu hỏi</span>
-                    <div id="text" contenteditable="true" @input="onInput">
+                    <div id="text" v-text="tempText" contenteditable="true" @input="onInput">
                       <input type="hidden" v-model="question" placeholder="edit me" />
                     </div>
                     <v-btn v-on:click="setBold">toggle bold</v-btn>
@@ -176,39 +182,13 @@ import { Items as Users } from "@/api/user";
 import Vue from "vue";
 import { mapGetters, mapActions } from "vuex";
 export default {
+  props: ["question"],
   layout: "dashboard",
   components: {},
+
   data() {
     return {
-      // data test
-      search: "",
-      complex: {
-        selected: [],
-        headers: [
-          {
-            text: "Avatar",
-            value: "avatar",
-          },
-          {
-            text: "Name",
-            value: "name",
-          },
-          {
-            text: "Email",
-            value: "email",
-          },
-          {
-            text: "Phone",
-            value: "phone",
-          },
-          {
-            text: "Action",
-            value: "",
-          },
-        ],
-        items: Users,
-      },
-      // data test
+      tempText: this.question.question,
       dialog: false,
       dialogSave: false,
       items: [
@@ -244,22 +224,22 @@ export default {
         { id: "4", name: "N4" },
         { id: "5", name: "N5" },
       ],
-      level: { id: "5", name: "N5" },
+      level: this.question.level,
       subTypeVocabularys: [
         { id: "1", name: "Từ vựng" },
         { id: "2", name: "Ngữ pháp" },
         { id: "3", name: "Đọc" },
         { id: "4", name: "Nghe" },
       ],
-      type: { id: "1", name: "Từ vựng" },
+      type: this.question.type,
       types: [
         { id: "1", name: "Từ vựng" },
         { id: "2", name: "Ngữ pháp" },
         { id: "3", name: "Đọc" },
         { id: "4", name: "Nghe" },
       ],
-      typeSub: {},
-      results: [],
+      typeSub: this.question.subType,
+      results: this.question.results,
       bold: [],
       italic: [],
       underline: [],
@@ -267,10 +247,15 @@ export default {
       question: "",
     };
   },
+  created() {
+    for (let index = 0; index < this.question.answer.length; index++) {
+      if (this.question.answer.result == true) {
+        this.results = [index];
+      }
+    }
+    console.log(this.results);
+  },
   computed: {
-    ...mapActions({
-      changeSubType: "QUESTION/changeSubType",
-    }),
     ...mapGetters({
       typesSub: "QUESTION/typesSub",
       status: "QUESTION/status",
@@ -513,6 +498,7 @@ export default {
     },
     onInput(e) {
       this.$store.dispatch("QUESTION/clearStatus", {});
+      console.log(this.question);
       return (this.question = e.target.innerText);
     },
     clearForm() {

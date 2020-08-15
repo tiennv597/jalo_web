@@ -13,6 +13,7 @@ const state = {
     { id: "6", name: "Cách dùng từ" },
   ],
   status: "",
+  questions: []
 }
 export default {
   namespaced: true,
