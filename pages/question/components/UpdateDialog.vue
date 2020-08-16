@@ -25,7 +25,8 @@
               <v-card>
                 <v-layout row>
                   <v-flex xs1></v-flex>
-                  <v-flex xs11>Mã câu hỏi:&nbsp;{{question.idQuestion}}</v-flex>
+                  <v-flex xs11>Mã câu hỏi:&nbsp;{{id}}</v-flex>
+                  <input v-model="_id" placeholder="edit me" />
                   <v-flex xs11>Mã câu hỏi:&nbsp;{{results}}</v-flex>
                 </v-layout>
                 <v-layout row>
@@ -78,11 +79,11 @@
                   <v-flex xs10>
                     <span>Nhập câu hỏi</span>
                     <div id="text" v-text="tempText" contenteditable="true" @input="onInput">
-                      <input type="hidden" v-model="question" placeholder="edit me" />
+                      <input type="hidden" v-model="content" placeholder="edit me" />
                     </div>
-                    <v-btn v-on:click="setBold">toggle bold</v-btn>
-                    <v-btn v-on:click="setItalic">toggle italic</v-btn>
-                    <v-btn v-on:click="setUnderline">toggle underline</v-btn>
+                    <v-btn v-on:click="setBold">In đậm</v-btn>
+                    <v-btn v-on:click="setItalic">In nghiêng</v-btn>
+                    <v-btn v-on:click="setUnderline">Gạch chân</v-btn>
                   </v-flex>
                 </v-layout>
               </v-card>
@@ -188,6 +189,7 @@ export default {
 
   data() {
     return {
+      id: this.question._id,
       tempText: this.question.question,
       dialog: false,
       dialogSave: false,
@@ -195,25 +197,25 @@ export default {
         {
           id: "answer1",
           label: "Câu trả lời 1",
-          content: "",
+          content: this.question.answer[0].answer,
           checked: 1,
         },
         {
           id: "answer2",
           label: "Câu trả lời 2",
-          content: "",
+          content: this.question.answer[1].answer,
           checked: 2,
         },
         {
           id: "answer3",
           label: "Câu trả lời 3",
-          content: "",
+          content: this.question.answer[2].answer,
           checked: 3,
         },
         {
           id: "answer4",
           label: "Câu trả lời 4",
-          content: "",
+          content: this.question.answer[3].answer,
           checked: 4,
         },
       ],
@@ -240,20 +242,16 @@ export default {
       ],
       typeSub: this.question.subType,
       results: this.question.results,
-      bold: [],
-      italic: [],
-      underline: [],
+      bold: this.question.bold,
+      italic: this.question.italic,
+      underline: this.question.underline,
       loading: false,
-      question: "",
+      content: this.question.question,
     };
   },
   created() {
-    for (let index = 0; index < this.question.answer.length; index++) {
-      if (this.question.answer.result == true) {
-        this.results = [index];
-      }
-    }
-    console.log(this.results);
+    // var node = document.getElementById("text");
+    // var htmlContent = node.insertText;
   },
   computed: {
     ...mapGetters({
@@ -326,6 +324,7 @@ export default {
         options.push(option);
       }
       for (let index = 0; index < this.results.length; index++) {
+        console.log(this.results);
         switch (this.results[index]) {
           case 1:
             options[0].result = true;
@@ -344,10 +343,11 @@ export default {
         }
       }
       var question = {
+        _id: this.id,
         level: this.level,
         type: this.type,
         subType: this.typeSub,
-        question: this.question,
+        question: this.content,
         explain: this.explain,
         answer: options,
         results: this.results,
@@ -356,7 +356,7 @@ export default {
         underline: this.underline,
       };
       setTimeout(() => {
-        this.$store.dispatch("QUESTION/createQuestion", {
+        this.$store.dispatch("QUESTION/updateQuestion", {
           question: question,
         });
         this.bold = [];
@@ -364,7 +364,6 @@ export default {
         this.underline = [];
         this.dialog = false;
       }, 3000);
-      console.log(this.italic + " " + this.bold + " " + this.underline);
     },
     onChangeType() {
       switch (this.level.id) {
@@ -498,12 +497,12 @@ export default {
     },
     onInput(e) {
       this.$store.dispatch("QUESTION/clearStatus", {});
-      console.log(this.question);
-      return (this.question = e.target.innerText);
+      console.log(this.content);
+      return (this.content = e.target.innerText);
     },
     clearForm() {
       this.question = "";
-      document.getElementById("text").innerHTML = "";
+      document.getElementById("text").innerText = "";
       for (let index = 0; index < this.items.length; index++) {
         this.items[index].content = "";
       }

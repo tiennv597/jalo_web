@@ -41,6 +41,24 @@ export default {
         }
 
     },
+     // update a new question
+     async updateQuestion({ commit }, question) {
+        try {
+            const respronse = await this.$axios.$post('question/update', {
+                question: question.question,
+            })
+            if (respronse.status == true) {
+                commit("SET_STATUS", "Update câu hỏi thành công!");
+            } else {
+                commit("SET_STATUS", "Có lỗi khi Update câu hỏi");
+            }
+            console.log(respronse);
+
+        } catch (error) {
+            console.log(error.respronse)
+        }
+
+    },
     // get question
     async getQuestion({ commit }, searchBy) {
         console.log(searchBy.searchByType);
