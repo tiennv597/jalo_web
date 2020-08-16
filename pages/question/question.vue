@@ -85,9 +85,7 @@
                   <td>{{ props.item.date }}</td>
                   <td>
                     <UpdateDialog :question="props.item" />
-                    <v-btn depressed outline icon fab dark color="pink" small>
-                      <v-icon>delete</v-icon>
-                    </v-btn>
+                    <DeleteDialog :question="props.item" />
                   </td>
                 </template>
               </v-data-table>
@@ -101,6 +99,7 @@
 <script>
 import AddDialog from "./components/AddDialog";
 import UpdateDialog from "./components/UpdateDialog";
+import DeleteDialog from "./components/DeleteDialog";
 import { Items as Users } from "@/api/user";
 import Vue from "vue";
 import { mapGetters, mapActions } from "vuex";
@@ -109,6 +108,7 @@ export default {
   components: {
     AddDialog,
     UpdateDialog,
+    DeleteDialog,
   },
   created() {
     this.$store.dispatch("QUESTION/getQuestion", {

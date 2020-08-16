@@ -41,8 +41,8 @@ export default {
         }
 
     },
-     // update a new question
-     async updateQuestion({ commit }, question) {
+    // update a new question
+    async updateQuestion({ commit }, question) {
         try {
             const respronse = await this.$axios.$post('question/update', {
                 question: question.question,
@@ -105,5 +105,23 @@ export default {
             console.log(error.respronse)
         }
 
-    }
+    },
+    // delete a question
+    async deleteQuestion({ commit }, id) {
+        try {
+            const respronse = await this.$axios.$post('question/delete', {
+                id: id.id,
+            })
+            if (respronse.status == true) {
+                commit("SET_STATUS", "Xóa câu hỏi thành công!");
+            } else {
+                commit("SET_STATUS", "Có lỗi khi Xóa câu hỏi");
+            }
+            console.log(respronse);
+
+        } catch (error) {
+            console.log(error.respronse)
+        }
+
+    },
 }
